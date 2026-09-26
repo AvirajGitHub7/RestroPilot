@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import QRCode from 'qrcode';
 import API from '../../api/axios';
 import { useAuth } from '../../context/AuthContext';
@@ -9,13 +9,11 @@ const TableManager = () => {
   const [restaurant, setRestaurant] = useState(null);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
-  const [syncing, setSyncing] = useState(false);
   const [newTableNumber, setNewTableNumber] = useState('');
   const [qrCache, setQrCache] = useState({});
   const [previewTable, setPreviewTable] = useState(null);
-  const [syncNotice, setSyncNotice] = useState('');
 
-  // The live frontend origin (e.g. https://restropilot.vercel.app or local IP)
+  // Live frontend origin
   const currentBaseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5173';
   const restaurantId = user?.restaurantId;
 
@@ -28,7 +26,6 @@ const TableManager = () => {
       setTables(tablesRes.data || []);
       setRestaurant(restRes.data || null);
 
-      // Generate sharp client-side QR codes matching current active domain
       if (tablesRes.data && tablesRes.data.length > 0) {
         generateAllQRs(tablesRes.data, restRes.data?._id || user?.restaurantId);
       }
@@ -87,25 +84,7 @@ const TableManager = () => {
     }
   };
 
-  // Synchronize backend QR codes with current domain
-  const handleSyncQR = async () => {
-    setSyncing(true);
-    setSyncNotice('');
-    try {
-      const { data } = await API.post('/tables/sync-qr', { baseUrl: currentBaseUrl });
-      setTables(data.tables || tables);
-      await generateAllQRs(data.tables || tables, restaurantId);
-      setSyncNotice(`Successfully synchronized all QR codes to ${currentBaseUrl}`);
-      setTimeout(() => setSyncNotice(''), 5000);
-    } catch (err) {
-      console.error('Failed to sync QR codes:', err);
-      alert('Failed to sync QR codes: ' + (err.response?.data?.message || err.message));
-    } finally {
-      setSyncing(false);
-    }
-  };
-
-  // Download raw QR code PNG
+  // Direct QR Code PNG Download
   const downloadQR = (table) => {
     const qrDataUrl = qrCache[table.tableNumber] || table.qrUrl;
     const link = document.createElement('a');
@@ -114,116 +93,6 @@ const TableManager = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  };
-
-  // Generate and download a high-res printable table stand card
-  const downloadPrintableCard = async (table) => {
-    const qrDataUrl = qrCache[table.tableNumber] || table.qrUrl;
-    const canvas = document.createElement('canvas');
-    const width = 1200;
-    const height = 1600;
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext('2d');
-
-    // 1. Background
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, width, height);
-
-    // 2. Top Banner Header
-    const gradient = ctx.createLinearGradient(0, 0, width, 0);
-    gradient.addColorStop(0, '#f97316');
-    gradient.addColorStop(0.5, '#ea580c');
-    gradient.addColorStop(1, '#d97706');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, width, 220);
-
-    // 3. Header Text
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 52px system-ui, -apple-system, sans-serif';
-    ctx.textAlign = 'center';
-    const restName = (restaurant?.name || 'RestroPilot Dining').toUpperCase();
-    ctx.fillText(restName, width / 2, 110);
-
-    ctx.font = '500 28px system-ui, -apple-system, sans-serif';
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    ctx.fillText('DIGITAL MENU & CONTACTLESS ORDERING', width / 2, 165);
-
-    // 4. Table Number Badge
-    ctx.fillStyle = '#fef3c7';
-    const badgeW = 420;
-    const badgeH = 80;
-    const badgeX = (width - badgeW) / 2;
-    const badgeY = 270;
-    ctx.beginPath();
-    ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 40);
-    ctx.fill();
-
-    ctx.fillStyle = '#9a3412';
-    ctx.font = '900 42px system-ui, -apple-system, sans-serif';
-    ctx.fillText(`TABLE ${table.tableNumber}`, width / 2, badgeY + 56);
-
-    // 5. QR Code in White Card Container with Shadow
-    const qrCardSize = 750;
-    const qrCardX = (width - qrCardSize) / 2;
-    const qrCardY = 400;
-
-    ctx.fillStyle = '#fafaf9';
-    ctx.strokeStyle = '#e7e5e4';
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.roundRect(qrCardX, qrCardY, qrCardSize, qrCardSize, 36);
-    ctx.fill();
-    ctx.stroke();
-
-    // Draw QR image
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = qrDataUrl;
-    await new Promise((resolve) => {
-      img.onload = resolve;
-      img.onerror = resolve;
-    });
-
-    const qrInnerSize = 650;
-    const qrInnerX = (width - qrInnerSize) / 2;
-    const qrInnerY = qrCardY + (qrCardSize - qrInnerSize) / 2;
-    ctx.drawImage(img, qrInnerX, qrInnerY, qrInnerSize, qrInnerSize);
-
-    // 6. Action Instructions
-    ctx.fillStyle = '#0f172a';
-    ctx.font = '800 48px system-ui, -apple-system, sans-serif';
-    ctx.fillText('SCAN TO VIEW MENU & ORDER', width / 2, 1230);
-
-    ctx.fillStyle = '#64748b';
-    ctx.font = '500 30px system-ui, -apple-system, sans-serif';
-    ctx.fillText('1. Open your phone camera', width / 2, 1295);
-    ctx.fillText('2. Point at QR code & tap the link', width / 2, 1345);
-    ctx.fillText('3. Browse dishes & order from your phone!', width / 2, 1395);
-
-    // 7. Footer Divider & Brand
-    ctx.strokeStyle = '#e2e8f0';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(100, 1460);
-    ctx.lineTo(width - 100, 1460);
-    ctx.stroke();
-
-    ctx.fillStyle = '#94a3b8';
-    ctx.font = '600 24px system-ui, -apple-system, sans-serif';
-    ctx.fillText('POWERED BY RESTROPILOT • SMART DINING SaaS', width / 2, 1515);
-
-    // Trigger download
-    const link = document.createElement('a');
-    link.href = canvas.toDataURL('image/png');
-    link.download = `${restaurant?.name || 'Restaurant'}-Table-${table.tableNumber}-Stand-Card.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  const handlePrintAll = () => {
-    window.print();
   };
 
   if (loading) {
@@ -235,72 +104,15 @@ const TableManager = () => {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Top Banner and Actions */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-6 animate-fade-in max-w-6xl">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="section-title text-2xl sm:text-3xl text-warm-900">Table & QR Code Manager</h1>
           <p className="text-warm-500 mt-1 text-sm sm:text-base">
-            Create dining tables and generate contactless QR codes that load directly on customers&apos; mobile phones.
+            Create dining tables and download contactless QR codes for customers to scan and order.
           </p>
         </div>
-
-        <div className="flex flex-wrap items-center gap-2.5">
-          <button
-            onClick={handleSyncQR}
-            disabled={syncing}
-            className="btn-secondary !px-3.5 !py-2 text-xs flex items-center gap-2 font-bold shadow-sm"
-            title="Ensure QR codes encode the current live URL"
-          >
-            {syncing ? (
-              <div className="w-4 h-4 border-2 border-warm-600 border-t-transparent rounded-full animate-spin" />
-            ) : (
-              <svg className="w-4 h-4 text-warm-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-            )}
-            Sync with Current Domain
-          </button>
-
-          {tables.length > 0 && (
-            <button
-              onClick={handlePrintAll}
-              className="btn-secondary !px-3.5 !py-2 text-xs flex items-center gap-2 font-bold shadow-sm"
-            >
-              <svg className="w-4 h-4 text-warm-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-              </svg>
-              Print Table Stands
-            </button>
-          )}
-        </div>
-      </div>
-
-      {syncNotice && (
-        <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-semibold px-4 py-3 rounded-xl animate-slide-down flex items-center gap-2">
-          <svg className="w-5 h-5 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
-          {syncNotice}
-        </div>
-      )}
-
-      {/* Info Card: Domain & QR Targeting */}
-      <div className="card p-4 sm:p-5 border border-brand-200 bg-gradient-to-r from-brand-50/70 via-white to-amber-50/40 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-brand-500 text-white flex items-center justify-center flex-shrink-0 shadow-sm font-black text-sm">
-            QR
-          </div>
-          <div>
-            <p className="text-xs font-bold text-warm-800 uppercase tracking-wider">Active QR Scan Target Host</p>
-            <p className="text-xs text-warm-600 font-mono mt-0.5 break-all">
-              {currentBaseUrl}
-            </p>
-          </div>
-        </div>
-        <span className="text-[11px] font-semibold text-brand-700 bg-brand-100/80 px-2.5 py-1 rounded-lg border border-brand-200 self-start sm:self-auto">
-          ● Ready for mobile cameras
-        </span>
       </div>
 
       {/* Create Table Form */}
@@ -314,7 +126,7 @@ const TableManager = () => {
               value={newTableNumber}
               onChange={(e) => setNewTableNumber(e.target.value)}
               className="input-field"
-              placeholder="e.g. 6"
+              placeholder="e.g. 11"
               required
             />
           </div>
@@ -345,7 +157,6 @@ const TableManager = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {tables.map((table) => {
             const tableQrUrl = qrCache[table.tableNumber] || table.qrUrl;
-            const targetUrl = `${currentBaseUrl}/restaurant/${restaurantId}/table/${table.tableNumber}`;
 
             return (
               <div
@@ -354,7 +165,7 @@ const TableManager = () => {
               >
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-brand-600 bg-brand-50 px-2 py-0.5 rounded-md border border-brand-200">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-warm-500 bg-warm-100 px-2 py-0.5 rounded-md">
                       DINING TABLE
                     </span>
                     <button
@@ -368,7 +179,7 @@ const TableManager = () => {
                     </button>
                   </div>
 
-                  <div className="text-3xl font-black text-warm-900 mb-4">
+                  <div className="text-2xl font-black text-warm-900 mb-4">
                     Table {table.tableNumber}
                   </div>
 
@@ -376,52 +187,29 @@ const TableManager = () => {
                   <div
                     onClick={() => setPreviewTable(table)}
                     className="bg-white border-2 border-warm-200 rounded-2xl p-4 inline-block mb-4 shadow-sm hover:border-brand-400 transition-colors cursor-pointer group"
-                    title="Click to expand & test scan"
+                    title="Click to expand QR"
                   >
                     <img
                       src={tableQrUrl}
                       alt={`QR Code for Table ${table.tableNumber}`}
                       className="w-36 h-36 mx-auto rounded-lg transition-transform group-hover:scale-105"
                     />
-                    <span className="text-[10px] font-bold text-brand-600 mt-2 block group-hover:underline">
-                      🔍 Tap to Preview
+                    <span className="text-[10px] font-semibold text-warm-500 mt-2 block group-hover:text-brand-600">
+                      Tap to Preview
                     </span>
-                  </div>
-
-                  {/* Scanned Link details */}
-                  <div className="mb-4">
-                    <a
-                      href={targetUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-[11px] text-warm-500 hover:text-brand-600 font-mono truncate block hover:underline"
-                      title="Test live link directly"
-                    >
-                      /table/{table.tableNumber} ↗
-                    </a>
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className="space-y-2 pt-3 border-t border-warm-100">
+                <div className="pt-3 border-t border-warm-100">
                   <button
-                    onClick={() => downloadPrintableCard(table)}
+                    onClick={() => downloadQR(table)}
                     className="btn-primary w-full !py-2.5 text-xs flex items-center justify-center gap-1.5 font-bold shadow-sm"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    Download Table Stand Card
-                  </button>
-
-                  <button
-                    onClick={() => downloadQR(table)}
-                    className="btn-secondary w-full !py-2 text-xs flex items-center justify-center gap-1.5 font-semibold text-warm-700 hover:bg-warm-100"
-                  >
-                    <svg className="w-3.5 h-3.5 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                     </svg>
-                    Download QR Only
+                    Download QR Code
                   </button>
                 </div>
               </div>
@@ -430,12 +218,12 @@ const TableManager = () => {
         </div>
       )}
 
-      {/* Modal: Live Scan Test Modal */}
+      {/* Modal: Simple QR Preview Modal */}
       {previewTable && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm animate-fade-in">
           <div className="card p-6 sm:p-8 max-w-sm w-full text-center bg-white border border-warm-200 shadow-2xl animate-scale-in">
             <div className="flex items-center justify-between pb-3 border-b border-warm-100 mb-4">
-              <h3 className="font-extrabold text-warm-900 text-lg">Table {previewTable.tableNumber} QR Scan Test</h3>
+              <h3 className="font-bold text-warm-900 text-lg">Table {previewTable.tableNumber} QR</h3>
               <button
                 onClick={() => setPreviewTable(null)}
                 className="p-1 rounded-lg text-warm-400 hover:text-warm-700"
@@ -446,11 +234,7 @@ const TableManager = () => {
               </button>
             </div>
 
-            <p className="text-xs text-warm-500 mb-4 font-medium">
-              Scan this with your mobile phone camera to test live menu ordering:
-            </p>
-
-            <div className="bg-warm-50 p-4 rounded-2xl border-2 border-brand-200 inline-block shadow-inner mb-4">
+            <div className="bg-warm-50 p-4 rounded-2xl border border-warm-200 inline-block mb-4">
               <img
                 src={qrCache[previewTable.tableNumber] || previewTable.qrUrl}
                 alt="Table QR Code"
@@ -458,19 +242,12 @@ const TableManager = () => {
               />
             </div>
 
-            <div className="bg-warm-50 rounded-xl p-3 border border-warm-200 mb-5 text-left">
-              <p className="text-[10px] font-bold text-warm-400 uppercase tracking-wider">Target Scan Link</p>
-              <p className="text-xs text-brand-700 font-mono break-all mt-0.5 font-bold">
-                {`${currentBaseUrl}/restaurant/${restaurantId}/table/${previewTable.tableNumber}`}
-              </p>
-            </div>
-
             <div className="flex gap-2">
               <button
-                onClick={() => downloadPrintableCard(previewTable)}
+                onClick={() => downloadQR(previewTable)}
                 className="btn-primary flex-1 text-xs !py-2.5 font-bold"
               >
-                Download Stand
+                Download QR
               </button>
               <button
                 onClick={() => setPreviewTable(null)}

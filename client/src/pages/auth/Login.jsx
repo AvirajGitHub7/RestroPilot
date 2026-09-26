@@ -31,49 +31,40 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left - Decorative Panel */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-hero relative overflow-hidden items-center justify-center">
-        {/* Floating blobs */}
-        <div className="absolute top-20 left-20 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-yellow-300/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }} />
-        <div className="absolute top-1/2 left-1/3 w-48 h-48 bg-white/10 rounded-full blur-2xl animate-bounce-soft" />
+    <div className="min-h-screen flex bg-warm-50">
+      {/* ─── Left - Food Model & Culinary Showcase Panel ─── */}
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-stone-950">
+        {/* Background Food Photography (Real Gourmet Restaurant Vibe) */}
+        <img
+          src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1600&q=85"
+          alt="Gourmet Dining Cuisine"
+          className="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.75] contrast-105"
+        />
 
-        {/* Decorative circles */}
-        <div className="absolute top-16 right-16 w-20 h-20 border-4 border-white/20 rounded-full" />
-        <div className="absolute bottom-32 left-16 w-12 h-12 border-4 border-white/20 rounded-full" />
-        <div className="absolute top-1/3 right-1/4 w-8 h-8 bg-white/20 rounded-full" />
+        {/* Sophisticated Dark Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/70 to-stone-900/50" />
+        <div className="absolute inset-0 bg-radial-gradient from-transparent via-transparent to-black/60" />
 
-        {/* Content */}
-        <div className="relative z-10 text-center px-12 max-w-lg">
-          {/* Big icon */}
-          <div className="mb-8 flex justify-center">
-            <Logo size="xl" showText={false} />
+        {/* Floating Brand & Features Content */}
+        <div className="relative z-10 w-full h-full p-12 flex flex-col justify-between text-white">
+          <div>
+            <Logo size="lg" className="brightness-125" />
           </div>
-          <h2 className="text-4xl font-extrabold text-white mb-4 leading-tight">
-            Simplify your <br />restaurant orders
-          </h2>
-          <p className="text-white/80 text-lg leading-relaxed">
-            QR-powered digital menus. Customers scan, browse, and order — no app required.
-          </p>
 
-          {/* Feature chips */}
-          <div className="flex flex-wrap justify-center gap-3 mt-8">
-            {['QR Menus', 'Live Orders', 'Easy Setup'].map((f) => (
-              <span key={f} className="bg-white/15 backdrop-blur-sm text-white text-sm font-medium px-4 py-2 rounded-full border border-white/20">
-                {f}
-              </span>
-            ))}
+          <div className="max-w-lg space-y-4">
+            <h2 className="text-4xl xl:text-5xl font-black text-white leading-tight drop-shadow-md">
+              Elevate your dining with contactless ordering.
+            </h2>
+
+            <p className="text-stone-300 text-base leading-relaxed font-normal">
+              Customers simply scan the table QR with their phone camera to view the live menu and order directly to your kitchen.
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Right - Login Form */}
+      {/* ─── Right - Login Form ─── */}
       <div className="flex-1 flex items-center justify-center px-6 py-12 bg-white relative">
-        {/* Subtle background pattern */}
-        <div className="absolute inset-0 opacity-[0.02]"
-          style={{ backgroundImage: 'radial-gradient(circle, #f97316 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
-
         <div className="w-full max-w-md relative animate-fade-in">
           {/* Mobile logo */}
           <div className="lg:hidden text-center mb-8 flex justify-center">
@@ -82,14 +73,14 @@ const Login = () => {
 
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-extrabold text-warm-900">Welcome back </h1>
-            <p className="text-warm-500 mt-2">Sign in to manage your restaurant</p>
+            <h1 className="text-3xl font-black text-warm-900 tracking-tight">Welcome back</h1>
+            <p className="text-warm-500 text-sm mt-1.5 font-medium">Sign in to manage your restaurant orders & tables</p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-red-600 text-sm animate-slide-down flex items-center gap-2">
+              <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-red-600 text-sm animate-slide-down flex items-center gap-2 font-medium">
                 <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -98,82 +89,60 @@ const Login = () => {
             )}
 
             <div>
-              <label className="block text-sm font-semibold text-warm-700 mb-2">Email address</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <svg className="w-5 h-5 text-warm-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <input
-                  id="login-email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="input-field !pl-12"
-                  placeholder="you@example.com"
-                  autoComplete="email"
-                  required
-                />
-              </div>
+              <label className="block text-xs font-bold text-warm-700 uppercase tracking-wider mb-2">
+                Email Address
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="input-field"
+                placeholder="owner@restaurant.com"
+                required
+              />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-warm-700 mb-2">Password</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <svg className="w-5 h-5 text-warm-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                </div>
-                <input
-                  id="login-password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="input-field !pl-12"
-                  placeholder="••••••••"
-                  autoComplete="current-password"
-                  required
-                />
-              </div>
+              <label className="block text-xs font-bold text-warm-700 uppercase tracking-wider mb-2">
+                Password
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="input-field"
+                placeholder="••••••••"
+                required
+              />
             </div>
 
             <button
-              id="login-submit"
               type="submit"
               disabled={loading}
-              className="btn-primary w-full !py-3.5 text-base flex items-center justify-center gap-2"
+              className="btn-primary w-full !py-3.5 text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
-                  Sign in
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  <span>Sign In</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                   </svg>
                 </>
               )}
             </button>
           </form>
 
-          {/* Divider */}
-          <div className="flex items-center gap-4 my-8">
-            <div className="flex-1 h-px bg-warm-200" />
-            <span className="text-sm text-warm-400 font-medium">New here?</span>
-            <div className="flex-1 h-px bg-warm-200" />
+          {/* Footer link */}
+          <div className="mt-8 text-center pt-6 border-t border-warm-100">
+            <p className="text-warm-500 text-sm">
+              New restaurant?{' '}
+              <Link to="/register" className="text-brand-600 hover:text-brand-700 font-bold hover:underline">
+                Register your restaurant →
+              </Link>
+            </p>
           </div>
-
-          <Link
-            to="/register"
-            className="block w-full text-center py-3.5 rounded-xl border-2 border-brand-200 text-brand-600 font-semibold
-              hover:bg-brand-50 hover:border-brand-300 transition-all duration-300 active:scale-[0.98]"
-          >
-            Register your restaurant
-          </Link>
         </div>
       </div>
     </div>

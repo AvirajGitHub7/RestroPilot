@@ -67,17 +67,13 @@ This guide walks you through deploying **RestroPilot** seamlessly to **Render** 
    ```
 3. In your RestroPilot owner dashboard:
    - Open **Tables & QR** (`/owner/tables`).
-   - Click **Sync with Current Domain** to sync all QR codes to your live Vercel production URL.
-   - Click **Download Table Stand Card** or **Download QR** and scan with your phone camera.
+   - Download table QR codes and test scanning with your phone camera.
    - The digital menu will instantly open on your phone!
 
 ---
 
-## 4. 🔑 Default Seeded Accounts in your MongoDB Atlas Cluster
-
-| Role | Restaurant | Email | Password | Details |
-|---|---|---|---|---|
-| **Super Admin** | Platform Admin | `admin@restropilot.com` | `adminpassword123` | Can approve/manage all restaurants |
-| **Owner** | **RAJ FOOD CENTRE (RFC)** | `rfc@restropilot.com` | `password123` | **107 dishes**, Tables 1 to 10 with QR codes |
-| **Owner** | **Brotherhood Lounge & Dining** | `brotherhood@restropilot.com` | `password123` | Multi-cuisine menu, Tables 1 to 5 with QR codes |
+## 4. 🛡️ Verification & Security
+- Ensure `.env` is listed in `.gitignore` so secrets are never pushed to version control.
+- Use strong, randomly generated JWT secrets in production.
+- Enable IP access whitelist on MongoDB Atlas to allow Render's outbound traffic (or `0.0.0.0/0` with strong password authentication).
 

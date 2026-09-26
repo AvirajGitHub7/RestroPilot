@@ -68,35 +68,33 @@ const Navbar = () => {
                   title="Profile & Settings"
                   className="flex items-center gap-2.5 bg-gradient-to-r from-warm-50 to-warm-100/60 pl-1 pr-3 py-1 rounded-2xl border border-warm-200/70 shadow-sm hover:border-brand-300 transition-colors"
                 >
-                  <div className="w-8 h-8 rounded-xl bg-brand-50 flex items-center justify-center overflow-hidden shadow-sm ring-2 ring-white">
-                    <img
-                      src={user.avatar || `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(user.name || 'User')}`}
-                      alt={user.name}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
-                      }}
-                    />
-                    <div className="w-full h-full bg-gradient-to-br from-brand-500 to-amber-500 hidden items-center justify-center text-xs font-black text-white">
-                      {user.name?.charAt(0).toUpperCase()}
+                  {user.role === 'super_admin' ? (
+                    <div className="w-8 h-8 rounded-xl bg-slate-900 text-amber-400 flex items-center justify-center font-bold text-xs shadow-sm ring-2 ring-white">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="w-8 h-8 rounded-xl bg-brand-50 flex items-center justify-center overflow-hidden shadow-sm ring-2 ring-white">
+                      <img
+                        src={user.avatar || `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(user.name || 'User')}`}
+                        alt={user.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                      <div className="w-full h-full bg-gradient-to-br from-brand-500 to-amber-500 hidden items-center justify-center text-xs font-black text-white">
+                        {user.name?.charAt(0).toUpperCase()}
+                      </div>
+                    </div>
+                  )}
                   <div className="hidden sm:flex flex-col leading-none">
                     <span className="text-xs font-bold text-warm-800 tracking-tight">{user.name}</span>
                     <span className="text-[9px] font-bold text-brand-500 uppercase tracking-widest mt-0.5">{user.role?.replace('_', ' ')}</span>
                   </div>
                 </Link>
-                {/* Logout icon button */}
-                <button
-                  onClick={handleLogout}
-                  title="Sign out"
-                  className="w-8 h-8 flex items-center justify-center rounded-xl text-warm-400 hover:text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 transition-all duration-200"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                  </svg>
-                </button>
               </div>
             ) : (
               <div className="flex items-center gap-2">
@@ -127,20 +125,28 @@ const Navbar = () => {
               {/* Header inside drawer */}
               <div className="flex items-center justify-between pb-6 border-b border-warm-100 mb-4">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-brand-50 flex items-center justify-center overflow-hidden shadow-sm ring-2 ring-warm-200">
-                    <img
-                      src={user.avatar || `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(user.name || 'User')}`}
-                      alt={user.name}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
-                      }}
-                    />
-                    <div className="w-full h-full bg-gradient-brand hidden items-center justify-center text-white font-black text-sm">
-                      {user.name?.charAt(0).toUpperCase()}
+                  {user.role === 'super_admin' ? (
+                    <div className="w-9 h-9 rounded-xl bg-slate-900 text-amber-400 flex items-center justify-center font-bold text-sm shadow-sm ring-2 ring-warm-200">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="w-9 h-9 rounded-xl bg-brand-50 flex items-center justify-center overflow-hidden shadow-sm ring-2 ring-warm-200">
+                      <img
+                        src={user.avatar || `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(user.name || 'User')}`}
+                        alt={user.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                      <div className="w-full h-full bg-gradient-brand hidden items-center justify-center text-white font-black text-sm">
+                        {user.name?.charAt(0).toUpperCase()}
+                      </div>
+                    </div>
+                  )}
                   <div>
                     <h3 className="text-sm font-bold text-warm-900">{user.name}</h3>
                     <p className="text-[11px] text-warm-500 capitalize">{user.role?.replace('_', ' ')}</p>
@@ -189,7 +195,7 @@ const Navbar = () => {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
-                Sign Out
+                Logout
               </button>
             </div>
           </div>

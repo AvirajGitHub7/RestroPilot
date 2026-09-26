@@ -97,8 +97,7 @@ const AdminDashboard = () => {
       {/* Pending Approvals */}
       {pending.length > 0 && (
         <div>
-          <h2 className="text-base sm:text-lg font-bold text-warm-900 mb-3 sm:mb-4 flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
+          <h2 className="text-base sm:text-lg font-bold text-warm-900 mb-3 sm:mb-4">
             Pending Approvals ({pending.length})
           </h2>
           <div className="grid gap-4">

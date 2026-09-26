@@ -178,8 +178,7 @@ const RestaurantProfile = () => {
       <div className="card p-6 sm:p-8 border border-warm-200 bg-white shadow-sm space-y-6">
         <div className="flex items-center justify-between border-b border-warm-100 pb-4">
           <div>
-            <h2 className="text-lg font-bold text-warm-900 flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-brand-500" />
+            <h2 className="text-lg font-bold text-warm-900">
               Owner Profile & DiceBear Avatar
             </h2>
             <p className="text-xs text-warm-500 mt-0.5">Customize your interactive avatar powered by DiceBear API</p>
@@ -308,8 +307,7 @@ const RestaurantProfile = () => {
       {/* Form */}
       <form onSubmit={handleSubmit} className="card p-5 sm:p-8 space-y-6 border border-warm-200 bg-white">
         <div className="border-b border-warm-100 pb-3">
-          <h2 className="text-lg font-bold text-warm-900 flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-amber-500" />
+          <h2 className="text-lg font-bold text-warm-900">
             Restaurant Details & Customer Menu
           </h2>
           <p className="text-xs text-warm-500 mt-0.5">These details appear when customers scan the table QR code</p>

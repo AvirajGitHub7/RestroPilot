@@ -14,6 +14,12 @@ node_modules/
 dist/
 */dist/
 
+# Uploads & Temporary Assets
+uploads/
+*/uploads/
+scratch/
+temp/
+
 # Logs
 *.log
 logs/

@@ -15,56 +15,68 @@ const Logo = ({ size = 'md', showText = true, className = '' }) => {
 
   const textSizes = {
     sm: 'text-base font-extrabold',
-    md: 'text-xl font-extrabold',
+    md: 'text-xl font-black',
     lg: 'text-2xl font-black',
     xl: 'text-3xl sm:text-4xl font-black',
   };
 
   return (
     <div className={`inline-flex items-center gap-2.5 ${className}`}>
+      {/* Icon Badge */}
       <div
-        className={`${iconSizes[size] || iconSizes.md} bg-gradient-brand flex items-center justify-center shadow-brand shadow-sm flex-shrink-0 transition-all duration-300 group-hover:scale-105 group-hover:shadow-brand-lg`}
+        className={`${iconSizes[size] || iconSizes.md} bg-gradient-to-br from-orange-500 via-amber-500 to-rose-600 flex items-center justify-center shadow-lg shadow-orange-500/20 flex-shrink-0 transition-transform duration-300 group-hover:scale-105 border border-white/20`}
       >
         <svg
           viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className={`${svgSizes[size] || svgSizes.md} text-white`}
+          className={`${svgSizes[size] || svgSizes.md} text-white drop-shadow-sm`}
         >
-          {/* Steam Swirl */}
+          {/* Pilot Crown Star */}
           <path
-            d="M10.5 4.5c0-.8.6-1.5 1.2-1.9.7-.5.9-.9.7-1.3-.2.4-.8.7-1.3 1.1-.6.5-.9 1.2-.6 2.1z"
+            d="M12 2L13.1 4.5L15.5 5.5L13.1 6.5L12 9L10.9 6.5L8.5 5.5L10.9 4.5L12 2Z"
             fill="currentColor"
-            opacity="0.9"
+          />
+
+          {/* Luxury Cloche Dome with Aerodynamic Wings */}
+          <path
+            d="M4 14C4.2 9.8 7.5 7 12 7C16.5 7 19.8 9.8 20 14H4Z"
+            fill="currentColor"
+          />
+
+          {/* Aerodynamic Pilot Wing Lines */}
+          <path
+            d="M2 14.5C3.5 13.2 5.5 12.5 8 12.5"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            opacity="0.8"
           />
           <path
-            d="M13.8 4c0-.6.4-1.1.8-1.4.5-.3.6-.6.5-.8-.1.2-.6.5-.9.7-.4.3-.6.8-.4 1.5z"
-            fill="currentColor"
+            d="M22 14.5C20.5 13.2 18.5 12.5 16 12.5"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
             opacity="0.8"
           />
 
-          {/* Cloche Dome Knob */}
-          <circle cx="12" cy="7" r="1.5" fill="currentColor" />
-
-          {/* Cloche Dome */}
-          <path
-            d="M5 16c.2-4.2 3.4-7.5 7-7.5s6.8 3.3 7 7.5H5z"
-            fill="currentColor"
-          />
-
           {/* Platter Base */}
-          <rect x="3.5" y="17" width="17" height="2" rx="1" fill="currentColor" />
+          <rect x="3" y="15.5" width="18" height="2" rx="1" fill="currentColor" />
 
-          {/* Digital QR Spark Accent */}
-          <rect x="11" y="12" width="2" height="2" rx="0.5" fill="#ea580c" />
+          {/* Digital Smart Compass Pip */}
+          <circle cx="12" cy="11.5" r="1.25" fill="#fef08a" />
         </svg>
       </div>
 
       {showText && (
         <span
-          className={`${textSizes[size] || textSizes.md} bg-gradient-to-r from-brand-600 via-brand-500 to-accent-600 bg-clip-text text-transparent tracking-tight leading-none select-none`}
+          className={`${textSizes[size] || textSizes.md} tracking-tight leading-none select-none flex items-center`}
         >
-          Restro<span className="text-amber-500">Pilot</span>
+          <span className="text-warm-900 font-black">Restro</span>
+          <span className="bg-gradient-to-r from-orange-600 via-amber-500 to-rose-600 bg-clip-text text-transparent font-black ml-0.5">
+            Pilot
+          </span>
+          <span className="w-1.5 h-1.5 rounded-full bg-orange-500 ml-1 inline-block" />
         </span>
       )}
     </div>

@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const ownerLinks = [
@@ -14,15 +14,18 @@ const adminLinks = [
 ];
 
 const Sidebar = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const links = user?.role === 'super_admin' ? adminLinks : ownerLinks;
 
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
-    <aside className="w-64 min-h-[calc(100vh-4rem)] bg-white border-r border-warm-100 p-4 hidden lg:block">
-      <div className="mb-6 px-4">
-        <p className="text-xs font-semibold text-warm-400 uppercase tracking-widest">Navigation</p>
-      </div>
-      <nav className="flex flex-col gap-1">
+    <aside className="w-64 h-[calc(100vh-4rem)] sticky top-16 bg-white border-r border-warm-100 p-4 hidden lg:flex lg:flex-col justify-between z-30 flex-shrink-0">
+      <nav className="flex flex-col gap-1 overflow-y-auto pr-0.5">
         {links.map((link) => (
           <NavLink
             key={link.to}
@@ -42,6 +45,19 @@ const Sidebar = () => {
           </NavLink>
         ))}
       </nav>
+
+      {/* Permanently visible Logout pinned at bottom */}
+      <div className="pt-4 border-t border-warm-100 mt-auto flex-shrink-0">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-warm-500 hover:text-red-600 hover:bg-red-50 transition-all duration-200"
+        >
+          <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          Logout
+        </button>
+      </div>
     </aside>
   );
 };
