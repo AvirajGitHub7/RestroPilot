@@ -7,13 +7,14 @@
 
 ## Application Preview
 
-| Owner Dashboard | Customer Mobile Menu |
-| :---: | :---: |
-| <img src="docs/screenshots/02_dashboard.png" width="460" alt="Owner Dashboard" /> | <img src="docs/screenshots/05_customer_menu.png" width="460" alt="Customer Mobile Menu" /> |
-| **Table & QR Manager** | **Menu Management** |
-| <img src="docs/screenshots/04_table_manager.png" width="460" alt="Table & QR Manager" /> | <img src="docs/screenshots/03_menu_manager.png" width="460" alt="Menu Management" /> |
-| **Authentication Portal** | |
-| <img src="docs/screenshots/01_login.png" width="460" alt="Authentication Portal" /> | |
+### Authentication Portal
+<img src="docs/screenshots/01_auth.png" alt="Authentication Portal" width="100%" />
+
+### Table & QR Code Manager
+<img src="docs/screenshots/03_table_manager.png" alt="Table & QR Code Manager" width="100%" />
+
+### Profile & Restaurant Branding
+<img src="docs/screenshots/02_branding_and_info.png" alt="Profile & Restaurant Branding" width="100%" />
 
 ---
 
